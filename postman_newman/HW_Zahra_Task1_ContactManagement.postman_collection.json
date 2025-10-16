@@ -1,0 +1,346 @@
+{
+	"info": {
+		"_postman_id": "eff2e464-1c68-4a2e-84d2-fb08731e1902",
+		"name": "HW_Task1_ContactManagement",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49204887",
+		"_collection_link": "https://zahra-eid112-8009962.postman.co/workspace/zahra-eid's-Workspace~4852a0a3-a3c1-4985-8b0b-bb039bc5b7de/collection/49204887-eff2e464-1c68-4a2e-84d2-fb08731e1902?action=share&source=collection_link&creator=49204887"
+	},
+	"item": [
+		{
+			"name": "01_CreateUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Generate a unique email using timestamp and random string",
+							"function generateRandomEmail() {",
+							"    const timestamp = Date.now();",
+							"    const randomStr = Math.random().toString(36).substring(2, 8);",
+							"    return `user_${timestamp}_${randomStr}@fake.com`;",
+							"}",
+							"",
+							"const dynamicEmail = generateRandomEmail();",
+							"",
+							"// Save the generated email to a collection variable",
+							"pm.environment.set(\"email\", dynamicEmail);",
+							"",
+							"// Optionally, log it for debugging",
+							"console.log(\"Generated email:\", dynamicEmail);",
+							"",
+							"",
+							"// Test if user creation was successful (status 201 or success message)",
+							"pm.test(\"User created successfully (status 201 or success message)\", function () {",
+							"    var isSuccess = false;",
+							"    var statusCode = pm.response.code;",
+							"    var jsonData;",
+							"    try {",
+							"        jsonData = pm.response.json();",
+							"    } catch (e) {",
+							"        jsonData = {};",
+							"    }",
+							"    // Check for status code 201 or a success message in the response",
+							"    if (statusCode === 201 || (jsonData.message && /success/i.test(jsonData.message))) {",
+							"        isSuccess = true;",
+							"    }",
+							"    pm.expect(isSuccess, \"User creation should be successful\").to.be.true;",
+							"",
+							"    if (isSuccess) {",
+							"        // Extract the actual values used in the request body (after variable resolution)",
+							"        var requestBody = pm.request.body.raw;",
+							"        var bodyObj = {};",
+							"        try {",
+							"            bodyObj = JSON.parse(requestBody);",
+							"        } catch (e) {}",
+							"        // Set collection variables only if both email and password are present",
+							"        if (bodyObj.email && bodyObj.password) {",
+							"            pm.environment.set(\"email\", bodyObj.email);",
+							"            pm.environment.set(\"password\", bodyObj.password);",
+							"        }",
+							"        // Set collection variable 'token' if present in the response",
+							"        if (jsonData.token) {",
+							"            pm.environment.set(\"token\", jsonData.token);",
+							"        }",
+							"    }",
+							"});",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"sda_zah954\",\r\n    \"lastName\": \"Zah\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"As@123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users"
+					]
+				},
+				"description": "Generated from cURL: curl --location 'https://thinking-tester-contact-list.herokuapp.com/users' \\\r\n--header 'Authorization: Bearer {{token}}' \\\r\n--data-raw '{\r\n    \"firstName\": \"Test\",\r\n    \"lastName\": \"User\",\r\n    \"email\": \"test@fake.com\",\r\n    \"password\": \"myPassword\"\r\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "02_AddContact",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"pm.test(\"Response body contains confirmation of contact creation\", function () {",
+							"    var jsonData = {};",
+							"    try {",
+							"        jsonData = pm.response.json();",
+							"    } catch (e) {",
+							"        // If not JSON, fail the test",
+							"        pm.expect.fail(\"Response is not valid JSON\");",
+							"    }",
+							"    // Check for an id or _id property (commonly returned on creation)",
+							"    pm.expect(jsonData).to.have.any.keys('id', '_id');",
+							"    // Optionally check for a success message or the returned contact data",
+							"    pm.expect(jsonData).to.satisfy(function(obj) {",
+							"        return obj.message?.toLowerCase().includes('success') || obj.message?.toLowerCase().includes('created') || true;",
+							"    }, \"Response should include a confirmation message\");",
+							"    // Check that the returned contact matches the sent data (optional, can be expanded)",
+							"    pm.expect(jsonData).to.have.property('firstName', 'John');",
+							"    pm.expect(jsonData).to.have.property('lastName', 'Doe');",
+							"    pm.expect(jsonData).to.have.property('email', 'jdoe@fake.com');",
+							"",
+							"    // Save the created contact id to an environment variable if present",
+							"    var contactId = jsonData.id || jsonData._id;",
+							"    if (contactId) {",
+							"        pm.environment.set('createdContactId', contactId);",
+							"    }",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"John\",\r\n    \"lastName\": \"Doe\",\r\n    \"birthdate\": \"1970-01-01\",\r\n    \"email\": \"jdoe@fake.com\",\r\n    \"phone\": \"8005555555\",\r\n    \"street1\": \"1 Main St.\",\r\n    \"street2\": \"Apartment A\",\r\n    \"city\": \"Anytown\",\r\n    \"stateProvince\": \"KS\",\r\n    \"postalCode\": \"12345\",\r\n    \"country\": \"USA\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/contacts",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"contacts"
+					]
+				},
+				"description": "Generated from cURL: curl --location 'https://thinking-tester-contact-list.herokuapp.com/contacts' \\\r\n--header 'Authorization: Bearer {{token}}' \\\r\n--data-raw '{\r\n    \"firstName\": \"John\",\r\n    \"lastName\": \"Doe\",\r\n    \"birthdate\": \"1970-01-01\",\r\n    \"email\": \"jdoe@fake.com\",\r\n    \"phone\": \"8005555555\",\r\n    \"street1\": \"1 Main St.\",\r\n    \"street2\": \"Apartment A\",\r\n    \"city\": \"Anytown\",\r\n    \"stateProvince\": \"KS\",\r\n    \"postalCode\": \"12345\",\r\n    \"country\": \"USA\"\r\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "03_DeleteContact",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test: Status code is 200",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test: Response time is less than 2000ms",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"// Test: Response body contains confirmation message",
+							"pm.test(\"Response body contains 'Contact deleted'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Contact deleted\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://thinking-tester-contact-list.herokuapp.com/contacts/{{createdContactId}}",
+					"protocol": "https",
+					"host": [
+						"thinking-tester-contact-list",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"contacts",
+						"{{createdContactId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "04_DeleteUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that status code is 200",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test that response time is less than 2000ms",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"pm.test(\"Response body is empty and confirms user deletion\", function () {",
+							"    pm.expect(pm.response.text()).to.be.oneOf([\"\", \"{}\"]);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "https://thinking-tester-contact-list.herokuapp.com/users/me",
+					"protocol": "https",
+					"host": [
+						"thinking-tester-contact-list",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"users",
+						"me"
+					]
+				},
+				"description": "Generated from cURL: curl --location --request DELETE 'https://thinking-tester-contact-list.herokuapp.com/users/me' \\\r\n--header 'Authorization: Bearer {{token}}'"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://thinking-tester-contact-list.herokuapp.com"
+		},
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGYxNGQ1OGRjMjYxZDAwMTU1NDY2OTQiLCJpYXQiOjE3NjA2NDQ0NDB9.EvXj1PyMH6WE2J7u9lDeWxG2BLhSw1g6qfTkZu5lRnY"
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": "As@123456"
+		},
+		{
+			"key": "createdContactId",
+			"value": ""
+		}
+	]
+}

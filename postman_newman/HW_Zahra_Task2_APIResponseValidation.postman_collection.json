@@ -1,0 +1,58 @@
+{
+	"info": {
+		"_postman_id": "94e45b19-4733-41b8-ab36-d8a444cbbfe7",
+		"name": "HW_Task2_APIResponseValidation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49204887",
+		"_collection_link": "https://zahra-eid112-8009962.postman.co/workspace/zahra-eid's-Workspace~4852a0a3-a3c1-4985-8b0b-bb039bc5b7de/collection/49204887-94e45b19-4733-41b8-ab36-d8a444cbbfe7?action=share&source=collection_link&creator=49204887"
+	},
+	"item": [
+		{
+			"name": "GetRequest",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type header contains 'application/json'\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"pm.test(\"Server header contains 'Kestrel'\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Server\")).to.include(\"Kestrel\");",
+							"});",
+							"pm.test(\"Transfer-Encoding header is exactly 'chunked'\", function () {",
+							"    pm.response.to.have.header(\"Transfer-Encoding\", \"chunked\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://fakerestapi.azurewebsites.net/api/v1/Users",
+					"protocol": "https",
+					"host": [
+						"fakerestapi",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Users"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

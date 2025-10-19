@@ -7,13 +7,14 @@ import org.testng.annotations.Test;
 
 import static org.hamcrest.Matchers.*;
 
-public class C04_HamcrestMarcherBasics {
+
+public class C04_HamcrestMatchersBasics {
 
     @Test
-void hamcrestMarcherBasics(){
+    void hamcrestMatchersBasicsTest() {
 
         Response response = RestAssured.get("https://restful-booker.herokuapp.com/booking/11");
-        //response.prettyPrint();
+        response.prettyPrint();
 
         response
                 .then()//We use this method for assertion, all the methods after this will return validateable response and we can do method chain.
@@ -40,5 +41,4 @@ void hamcrestMarcherBasics(){
                 .body("bookingdates", hasKey("checkout"))
         ;
     }
-
 }

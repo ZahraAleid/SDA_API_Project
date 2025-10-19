@@ -7,7 +7,6 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
 public class C03_NegativeAssertion {
-
     /*
         Given https://restful-booker.herokuapp.com/booking/0
         When User send a GET Request to the url
@@ -15,19 +14,18 @@ public class C03_NegativeAssertion {
         And Status Line should be HTTP/1.1 404 Not Found
         And Response body contains "Not Found"
         And Response body does not contain "Clarusway"And
-        Server is "Cowboy"
+        Server is "Heroku"
     */
 
-
     @Test
-    void test01(){
+    void negativeAssertionTest() {
 
-        //        Given https://restful-booker.herokuapp.com/booking/0
-        //        When User send a GET Request to the url
-                Response response = RestAssured.get("https://restful-booker.herokuapp.com/booking/0");
-                response.prettyPrint();
+//        Given https://restful-booker.herokuapp.com/booking/0
+//        When User send a GET Request to the url
+        Response response = RestAssured.get("https://restful-booker.herokuapp.com/booking/0");
+        response.prettyPrint();
 
-        //        Then HTTP Status code should be 404
+//        Then HTTP Status code should be 404
         assertEquals(response.statusCode(), 404,"Status code is not 404");
 
 //        And Status Line should be HTTP/1.1 404 Not Found
@@ -42,6 +40,6 @@ public class C03_NegativeAssertion {
 //        Server is "Heroku"
         assertEquals(response.header("Server"),"Heroku");
 
-
     }
+
 }

@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 import static org.hamcrest.Matchers.*;
 
 
-public class C04_HamcrestMatchersBasics {
+public class C04_HamcrestMatchersBasics{
 
     @Test
     void hamcrestMatchersBasicsTest() {

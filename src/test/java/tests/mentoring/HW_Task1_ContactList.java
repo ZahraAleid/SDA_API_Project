@@ -1,4 +1,4 @@
-package tests;
+package tests.mentoring;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;

@@ -1,7 +1,6 @@
 package tests;
 
-import base_urls.BookStoreBaseUrl;
-import base_urls.BookersBaseUrl;
+import base_urls.BookerBaseUrl;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
@@ -9,7 +8,7 @@ import org.testng.annotations.Test;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
-public class C13_PostRequestBookerString extends BookersBaseUrl {
+public class C13_PostRequestBookerString extends BookerBaseUrl {
 
 /*
     Given:

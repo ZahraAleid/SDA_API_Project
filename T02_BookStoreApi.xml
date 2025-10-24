@@ -9,7 +9,9 @@
                     <include name="createUserTest"/>
                     <include name="generateToken"/>
                     <include name="authorizeUser"/>
+                    <include name="getAllBooksTest"/>
                     <include name="assignBooksTest"/>
+                    <include name="getUserInfo"/>
                 </methods>
             </class>
         </classes>

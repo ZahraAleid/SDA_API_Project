@@ -28,8 +28,9 @@ public class T02_BookStoreApi extends BookStoreBaseUrl {
 
      */
     String userId;
-     Map<String, String> payload;
+    Map<String, String> payload;
     static String token;
+    Map<String, Object> BooksPayload;
 
     @Test(priority = 1)
     void createUserTest(){
@@ -85,9 +86,7 @@ public class T02_BookStoreApi extends BookStoreBaseUrl {
     }
 
     @Test(priority = 4, dependsOnMethods = "authorizeUser")
-    void assignBooksTest(){
-
-        // JsonNode payload = ObjectMapperUtils.getJsonNode("createUser");
+    void getAllBooksTest(){
 
         Response getBooksResponse = given(spec)
                 .when()
@@ -97,9 +96,9 @@ public class T02_BookStoreApi extends BookStoreBaseUrl {
         String isbn2 = getBooksResponse.jsonPath().getString("books[3].isbn");
 
 
-        Map<String, Object> payload = new HashMap<>();
+        BooksPayload = new HashMap<>();
 
-        payload.put("userId",userId);
+        BooksPayload.put("userId",userId);
         List<Map<String, String>> collectionOfIsbns = new ArrayList<>();
 
         Map<String, String> book1 = new HashMap<>();
@@ -111,16 +110,35 @@ public class T02_BookStoreApi extends BookStoreBaseUrl {
         collectionOfIsbns.add(book1);
         collectionOfIsbns.add(book2);
 
-        payload.put("collectionOfIsbns", collectionOfIsbns);
+        BooksPayload.put("collectionOfIsbns", collectionOfIsbns);
+        
+    }
+
+    @Test(priority = 5, dependsOnMethods = "authorizeUser")
+    void assignBooksTest(){
+
+        // JsonNode payload = ObjectMapperUtils.getJsonNode("createUser");
 
 
         Response response = given(spec)
                 .header("Authorization","Bearer "+ token)
-                .body(payload)
+                .body(BooksPayload)
                 .when()
                 .post("/BookStore/v1/Books");
 
         response.then().statusCode(201);
+    }
+
+    @Test(priority = 6, dependsOnMethods = "assignBooksTest")
+    void getUserInfo(){
+
+        Response response = given(spec)
+                .header("Authorization","Bearer "+ token)
+                .when()
+                .get("/Account/v1/User/"+ userId);
+        response.prettyPrint();
+
+        response.then().statusCode(200);
     }
 
 }

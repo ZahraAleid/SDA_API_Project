@@ -1,0 +1,14 @@
+{
+  "id": 1,
+  "userId": 11,
+  "products": [
+    {
+      "id": 1,
+      "title": "Ice Cream",
+      "price": 7,
+      "description": "Chocolate Ice Cream",
+      "category": "Dairy",
+      "image": "IceCream.jpg"
+    }
+  ]
+}

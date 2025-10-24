@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="All Test Suite">
+    <test verbose="2" preserve-order="true"
+          name="C:/Users/zahra/IdeaProjects/SDA_API_Project/src/test/java/tests/mentoring/day05/T01_UserManagement.java">
+        <classes>
+            <class name="tests.mentoring.day05.T01_UserManagement">
+                <methods>
+                    <include name="getAllUsersTest"/>
+                    <include name="createUserTest"/>
+                    <include name="getUserTest"/>
+                    <include name="updateUserTest"/>
+                    <include name="partialUpdateUserTest"/>
+                    <include name="deleteUserTest"/>
+                    <include name="getUserNegativeTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
